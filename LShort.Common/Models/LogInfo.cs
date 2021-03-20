@@ -31,7 +31,7 @@ namespace LShort.Common.Models
         [BsonElement("utc")]
         public DateTime Utc;
 
-        public LogInfo() : base()
+        public LogInfo()
         {
             Utc = DateTime.UtcNow;
             Properties = new List<KeyValuePair<string, object>>();
@@ -41,8 +41,12 @@ namespace LShort.Common.Models
         {
             this.Level = baseInfo.Level;
             this.Source = baseInfo.Source;
-            this.Properties = baseInfo.Properties;
-            this.Utc = DateTime.Now;
+            this.Properties = new List<KeyValuePair<string, object>>();
+            foreach (var (key, value) in baseInfo.Properties)
+            {
+                Properties.Add(new KeyValuePair<string, object>(key, value));
+            }
+            this.Utc = DateTime.UtcNow;
         }
 
         public ExpandoObject ToDynamic()

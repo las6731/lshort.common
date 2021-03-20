@@ -5,12 +5,18 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <Title>LShort.Common</Title>
         <Authors>Lukas Short</Authors>
+        <PackageVersion>1.1.0</PackageVersion>
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="AutoFixture" Version="4.15.0" />
+      <PackageReference Include="AutoFixture.AutoFakeItEasy" Version="4.15.0" />
       <PackageReference Include="MongoDB.Bson" Version="2.12.0-beta1" />
       <PackageReference Include="MongoDB.Driver" Version="2.12.0-beta1" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
+      <PackageReference Include="Npgsql" Version="5.0.3" />
+      <PackageReference Include="SqlKata" Version="2.2.0" />
+      <PackageReference Include="SqlKata.Execution" Version="2.2.0" />
       <PackageReference Include="Unity.Microsoft.DependencyInjection" Version="5.11.5" />
     </ItemGroup>
 

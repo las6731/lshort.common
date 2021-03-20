@@ -9,9 +9,9 @@ namespace LShort.Common.Models
         /// The id.
         /// </summary>
         [BsonId]
-        public Guid Id;
+        public Guid Id { get; set; }
 
-        protected ModelBase()
+        public ModelBase()
         {
             Id = Guid.NewGuid();
         }

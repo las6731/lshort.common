@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using LShort.Common.Database.Attributes;
 using LShort.Common.Logging;
 using LShort.Common.Models;
 using MongoDB.Driver;
@@ -13,14 +14,14 @@ namespace LShort.Common.Database.Implementation
         protected IMongoDatabase db;
 
         protected IMongoCollection<TModel> Collection =>
-            db.GetCollection<TModel>(((Collection) GetType().GetCustomAttribute(typeof(Collection))).Name);
+            db.GetCollection<TModel>(((Collection) GetType().GetCustomAttribute(typeof(Collection)))?.Name);
 
         protected IAppLogger logger;
 
         public MongoRepository(IMongoDatabase db, IAppLogger logger)
         {
             this.db = db;
-            this.logger = logger.FromSource(typeof(MongoRepository<>));
+            this.logger = logger.FromSource(typeof(MongoRepository<TModel>));
             
             EnsureIndexes();
         }
@@ -47,9 +48,9 @@ namespace LShort.Common.Database.Implementation
                 await Collection.InsertOneAsync(obj);
                 return RepositoryResult.Success;
             }
-            catch (MongoWriteConcernException e)
+            catch (MongoException e)
             {
-                logger.Error(e.WriteConcernResult.LastErrorMessage, e);
+                logger.Error(e.Message, e);
                 return RepositoryResult.Failure;
             }
         }
@@ -61,12 +62,12 @@ namespace LShort.Common.Database.Implementation
                 await Collection.InsertManyAsync(docs);
                 return RepositoryResult.Success;
             }
-            catch (MongoWriteConcernException e)
+            catch (MongoException e)
             {
-                logger.Error(e.WriteConcernResult.LastErrorMessage, e);
-                return e.WriteConcernResult.DocumentsAffected > 0
-                    ? RepositoryResult.PartialFailure
-                    : RepositoryResult.Failure;
+                logger.Error(e.Message, e);
+                if (e is MongoWriteConcernException ex && ex.WriteConcernResult.DocumentsAffected > 0)
+                    return RepositoryResult.PartialFailure;
+                return RepositoryResult.Failure;
             }
             
         }
@@ -78,9 +79,9 @@ namespace LShort.Common.Database.Implementation
                 await Collection.ReplaceOneAsync(doc => doc.Id == newDoc.Id, newDoc);
                 return RepositoryResult.Success;
             }
-            catch (MongoWriteConcernException e)
+            catch (MongoException e)
             {
-                logger.Error(e.WriteConcernResult.LastErrorMessage, e);
+                logger.Error(e.Message, e);
                 return RepositoryResult.Failure;
             }
         }
@@ -125,12 +126,12 @@ namespace LShort.Common.Database.Implementation
                 await Collection.DeleteManyAsync(doc => ids.Contains(doc.Id));
                 return RepositoryResult.Success;
             }
-            catch (MongoWriteConcernException e)
+            catch (MongoException e)
             {
-                logger.Error(e.WriteConcernResult.LastErrorMessage, e);
-                return e.WriteConcernResult.DocumentsAffected > 0
-                    ? RepositoryResult.PartialFailure
-                    : RepositoryResult.Failure;
+                logger.Error(e.Message, e);
+                if (e is MongoWriteConcernException ex && ex.WriteConcernResult.DocumentsAffected > 0)
+                    return RepositoryResult.PartialFailure;
+                return RepositoryResult.Failure;
             }
         }
     }
