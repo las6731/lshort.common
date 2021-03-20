@@ -6,6 +6,9 @@
         <Title>LShort.Common</Title>
         <Authors>Lukas Short</Authors>
         <PackageVersion>1.1.0</PackageVersion>
+        <Description>This package is basically only intended for my own use. If you find anything in here to be useful then feel free to use it, but I make no promises of features, support, or quality.</Description>
+        <PackageLicenseUrl>https://opensource.org/licenses/MIT</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/las6731/lshort.common</RepositoryUrl>
     </PropertyGroup>
 
     <ItemGroup>
